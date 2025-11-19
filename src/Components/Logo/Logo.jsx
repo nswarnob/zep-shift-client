@@ -3,10 +3,10 @@ import logo from '../../assets/logo.png'
 
 const Logo = () => {
   return (
-    <div>
+    <div className='flex items-center' >
        
-       <img src={logo} alt="" />
-
+       <img src={logo} className='w-6' alt="" />
+         <a className="font-bold text-xl">ZepShift</a>
     </div>
   )
 }

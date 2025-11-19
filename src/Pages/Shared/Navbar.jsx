@@ -1,8 +1,20 @@
 import React from 'react'
+import Logo from '../../Components/Logo/Logo'
+import { Link } from 'react-router'
+
 
 const Navbar = () => {
+
+  const Links = <>
+    <li><a>Home</a></li>
+    <li><a>About</a></li>
+    <li><a>Services</a></li>
+    <li><Link to={'/map'}> Map</Link></li>
+    
+  </>
+
   return (
-  <div className="navbar rounded-xl bg-base-100 shadow-sm">
+  <div className="navbar rounded-xl bg-base-100 px-8 py-3 shadow-sm">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -11,36 +23,20 @@ const Navbar = () => {
       <ul
         tabIndex="-1"
         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li><a>Item 1</a></li>
-        <li>
-          <a>Parent</a>
-          <ul className="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </li>
-        <li><a>Item 3</a></li>
+        {Links}
       </ul>
     </div>
-    <a className="btn btn-ghost text-xl">daisyUI</a>
+    <Logo></Logo>
+   
   </div>
   <div className="navbar-center hidden lg:flex">
-    <ul className="menu menu-horizontal px-1">
-      <li><a>Item 1</a></li>
-      <li>
-        <details>
-          <summary>Parent</summary>
-          <ul className="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </details>
-      </li>
-      <li><a>Item 3</a></li>
+    <ul className="menu menu-horizontal text-xl font-semibold px-1">
+      {Links}
     </ul>
   </div>
-  <div className="navbar-end">
-    <a className="btn">Button</a>
+  <div className="navbar-end gap-3">
+    <a className="btn w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-lime-400 hover:bg-lime-500 text-gray-900 font-semibold px-4 sm:px-6 py-2.5 sm:py-3 rounded-full transition-colors shadow-md hover:shadow-lg text-sm sm:text-base">Sign In</a>
+     <a className="btn w-full sm:w-auto rounded-full   px-4 sm:px-6 font-semibold text-sm sm:text-base">Sign Up</a>
   </div>
 </div>
   )
