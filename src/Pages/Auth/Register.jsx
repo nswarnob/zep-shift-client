@@ -1,21 +1,48 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import useAuth from "../../hooks/useAuth";
+import { Link } from "react-router";
+import SocialLogin from "./SocialLogin";
 
 const Register = () => {
+  const {registerUser} = useAuth();
   const {
     register,
     handleSubmit,
-    watch,
-    formState: { errors },
   } = useForm();
 
-  const handleRegistration = (data) => {};
+  const handleRegistration = (data) => {
+    registerUser(data.email, data.password)
+    .then(res => {
+      console.log(res.user)
+    }).catch(err => {
+      console.log(err)
+    })
+  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit(handleRegistration)}>
+         <h3 className="text-3xl text-center">Welcome ZepShift</h3>
+      <p className="text-center">Please Register</p>
+      <form className='w-[300px] mx-auto' onSubmit={handleSubmit(handleRegistration)}>
         <div className="card-body">
           <fieldset className="fieldset">
+            <label className="label">Name</label>
+            <input
+              type="text"
+              className="input"
+              {...register("name", { required: "Name is required!" })}
+              placeholder="Your Name"
+            />
+            
+              <label className="label">Image</label>
+            <input
+              type="file"
+              className="file-input"
+              {...register("Image", { required: "Image is required!" })}
+            />
+            
+
             <label className="label">Email</label>
             <input
               type="email"
@@ -47,10 +74,12 @@ const Register = () => {
             <div>
               <a className="link link-hover">Forgot password?</a>
             </div>
-            <button className="btn btn-neutral mt-4">Register</button>
+            <button className="btn bg-lime-400 hover:bg-lime-500 text-gray-900 mt-4">Register</button>
           </fieldset>
+          <p className="text-center">Already have an account? <Link className='text-blue-400 underline' to={'/login'} >Login</Link> </p>
         </div>
       </form>
+      <SocialLogin></SocialLogin>
     </div>
   );
 };

@@ -1,13 +1,12 @@
 import React from 'react'
 import { Outlet } from 'react-router'
-import Logo from '../Components/Logo/Logo'
+
 import img from '../assets/authImage.png'
 
 const AuthLayout = () => {
   return (
-    <div className='max-w-7xl mx-auto'>
-      <Logo></Logo>
-      <div className='flex items-center ' >
+    <div className='max-w-7xl mx-auto my-15'>
+      <div className='flex items-center w-full mx-auto ' >
         <div className='flex-1'>
           <Outlet></Outlet>
         </div>
