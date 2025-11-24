@@ -7,43 +7,55 @@ import Login from "../Pages/Auth/Login";
 import Register from "../Pages/Auth/Register";
 import PrivateRoutes from "./PrivateRoutes";
 import Rider from "../Pages/Rider/Rider";
-
-
-
-
+import { SendParcel } from "../Pages/sendParcel/SendParcel";
 
 export const router = createBrowserRouter([
-    {
-        path:'/',
-        Component: Rootlayout,
-        children:[
-            {
-                index:true,
-                Component: Home,
-            },
-            {
-                path:'/map',
-                Component: Coverage,
-                loader: ()=>fetch('/Service-center.json').then(res=>res.json())
-            },
-            {
-                path:'/',
-                Component: AuthLayout,
-                children: [
-                    {
-                        path:'/login',
-                        Component:Login
-                    },
-                    {
-                        path:'/register',
-                        Component:Register
-                    }
-                ]
-            },
-            {
-                path:'/rider',
-                element: <PrivateRoutes> <Rider></Rider> </PrivateRoutes>
-            }
-        ]
-    },
+  {
+    path: "/",
+    Component: Rootlayout,
+    children: [
+      {
+        index: true,
+        Component: Home,
+      },
+      {
+        path: "/map",
+        Component: Coverage,
+        loader: () => fetch("/Service-center.json").then((res) => res.json()),
+      },
+      {
+        path: "/",
+        Component: AuthLayout,
+        children: [
+          {
+            path: "/login",
+            Component: Login,
+          },
+          {
+            path: "/register",
+            Component: Register,
+          },
+        ],
+      },
+      {
+        path: "/rider",
+        element: (
+          <PrivateRoutes>
+            {" "}
+            <Rider></Rider>{" "}
+          </PrivateRoutes>
+        ),
+      },
+      {
+        path: "/send-parcel",
+        element: (
+          <PrivateRoutes>
+            {" "}
+            <SendParcel></SendParcel>{" "}
+          </PrivateRoutes>
+        ),
+          loader: () => fetch("/Service-center.json").then((res) => res.json()),
+      },
+    ],
+  },
 ]);
