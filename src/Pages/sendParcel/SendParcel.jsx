@@ -7,15 +7,16 @@ export const SendParcel = () => {
 
   const serviceCenter = useLoaderData();
 
-  if (!serviceCenter || serviceCenter.length === 0) {
-    return <div className="text-center my-10">Loading service centers...</div>;
-  }
-
   const regionsDuplicate = serviceCenter.map((c) => c.region);
   const regions = [...new Set(regionsDuplicate)];
 
   const senderRegion = useWatch({ control, name: "senderRegion" });
   const receiverRegion = useWatch({ control, name: "receiverRegion" });
+
+  if (!serviceCenter || serviceCenter.length === 0) {
+    return <div className="text-center my-10">Loading service centers...</div>;
+  }
+
 
   const districtByRegion = (region) => {
     const regionDistrict = serviceCenter.filter((c) => c.region === region);
