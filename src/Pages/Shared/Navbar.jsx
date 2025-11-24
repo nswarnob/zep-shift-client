@@ -12,16 +12,16 @@ const Navbar = () => {
         <NavLink to={"/"}>Home</NavLink>
       </li>
       <li>
-        <a>About</a>
+        <a href="#">About</a>
       </li>
       <li>
-        <a>Services</a>
+        <a href="#">Services</a>
       </li>
       <li>
-        <NavLink to={"/map"}> Map</NavLink>
+        <NavLink to={"/map"}>Map</NavLink>
       </li>
       <li>
-        <NavLink to={"/send-parcel"}> Send Parcel</NavLink>
+        <NavLink to={"/send-parcel"}>Send Parcel</NavLink>
       </li>
     </>
   );

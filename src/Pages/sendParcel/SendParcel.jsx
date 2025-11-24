@@ -3,9 +3,14 @@ import { useForm, useWatch } from "react-hook-form";
 import { useLoaderData } from "react-router";
 
 export const SendParcel = () => {
-  const { register, control, handleSubmit } = useForm();
+  const { register, control, handleSubmit } = useForm({ mode: "onSubmit" });
 
   const serviceCenter = useLoaderData();
+
+  if (!serviceCenter || serviceCenter.length === 0) {
+    return <div className="text-center my-10">Loading service centers...</div>;
+  }
+
   const regionsDuplicate = serviceCenter.map((c) => c.region);
   const regions = [...new Set(regionsDuplicate)];
 
@@ -91,7 +96,7 @@ export const SendParcel = () => {
               <fieldset className="fieldset">
                 <label className="label">Sender Phone No</label>
                 <input
-                  type="number"
+                  type="tel"
                   {...register("senderPhone")}
                   className="input input-bordered w-full"
                   placeholder="01xxxxxxxxx"
@@ -122,7 +127,7 @@ export const SendParcel = () => {
                 <legend className="fieldset-legend">Sender Region</legend>
                 <select
                   {...register("senderRegion")}
-                  defaultValue="Pick a Region"
+                  defaultValue={"Pick a Region"}
                   className="select"
                 >
                   <option disabled={true}>Pick Your Region</option>
@@ -132,6 +137,9 @@ export const SendParcel = () => {
                     </option>
                   ))}
                 </select>
+                <option value="" disabled>
+                  Pick Your Region
+                </option>
               </fieldset>
 
               <fieldset className="fieldset">
@@ -148,6 +156,9 @@ export const SendParcel = () => {
                     </option>
                   ))}
                 </select>
+                <option value="" disabled>
+                  Pick Your District
+                </option>
               </fieldset>
 
               <fieldset className="fieldset md:col-span-2">
@@ -224,6 +235,9 @@ export const SendParcel = () => {
                     </option>
                   ))}
                 </select>
+                <option value="" disabled>
+                  Pick Your Region
+                </option>
               </fieldset>
 
               <fieldset className="fieldset">
@@ -240,6 +254,9 @@ export const SendParcel = () => {
                     </option>
                   ))}
                 </select>
+                <option value="" disabled>
+                  Pick Your District
+                </option>
               </fieldset>
 
               <fieldset className="fieldset md:col-span-2">
@@ -253,13 +270,13 @@ export const SendParcel = () => {
             </div>
           </div>
         </div>
-      <div className="text-center">
+        <div className="text-center">
           <input
-          type="submit"
-          vlaue="Send Parcel "
-          className="btn btn-primary w-50 mt-6"
-        />
-      </div>
+            type="submit"
+            vlaue="Send Parcel"
+            className="btn btn-primary w-50 mt-6"
+          />
+        </div>
       </form>
     </div>
   );
