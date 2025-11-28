@@ -3,11 +3,12 @@ import { useForm, useWatch } from "react-hook-form";
 import { useLoaderData } from "react-router";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import axios from "axios";
+import useAuth from "../../hooks/useAuth";
 
 export const SendParcel = () => {
   const { register, control, handleSubmit } = useForm({ mode: "onSubmit" });
-   const axiosSecure = useAxiosSecure();
+  const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
   const serviceCenter = useLoaderData();
 
   const regionsDuplicate = serviceCenter.map((c) => c.region);
@@ -32,6 +33,7 @@ export const SendParcel = () => {
     const isDocument = data.parcelType === "document";
     const isSameDistrict = data.senderDistrict === data.receiverDistrict;
     const parcelWeight = parseFloat(data.parcelWeight);
+    console.log(parcelWeight);
 
     let cost = 0;
 
@@ -60,13 +62,9 @@ export const SendParcel = () => {
       confirmButtonText: "Yes, take it!",
     }).then((result) => {
       if (result.isConfirmed) {
-
-
-       axios.post('/parcel', data)
-       .then(res=>{
-        console.log("After saving parcel:", res.data);
-       })
-
+        axiosSecure.post("/send-parcel", data).then((res) => {
+          console.log("After saving parcel:", res.data);
+        });
 
         // Swal.fire({
         //   title: "Deleted!",
@@ -121,7 +119,10 @@ export const SendParcel = () => {
             <input
               type="number"
               className="input w-full"
-              {...register("percelWeight")}
+              {...register("parcelWeight", {
+                valueAsNumber: true,
+                required: "Parcel weight is required!",
+              })}
               placeholder="Percel Weight"
             />
           </fieldset>
@@ -138,6 +139,7 @@ export const SendParcel = () => {
                 <input
                   type="text"
                   {...register("senderName")}
+                  defaultValue={user?.displayName}
                   className="input input-bordered w-139"
                   placeholder="Full Name"
                 />
@@ -158,6 +160,7 @@ export const SendParcel = () => {
                 <input
                   type="text"
                   {...register("senderEmail")}
+                  defaultValue={user?.email}
                   className="input input-bordered w-full"
                   placeholder="abc@gmail.com"
                 />
