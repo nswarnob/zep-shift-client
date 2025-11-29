@@ -110,7 +110,7 @@ export const SendParcel = () => {
             <input
               type="text"
               className="input w-full"
-              {...register("percelName")}
+              {...register("parcelName")}
               placeholder="Percel Name"
             />
           </fieldset>
