@@ -10,6 +10,8 @@ import Rider from "../Pages/Rider/Rider";
 import { SendParcel } from "../Pages/sendParcel/SendParcel";
 import DashboardLayout from "../layouts/DashboardLayout";
 import MyParcel from "../Pages/Dashboard/MyParcel";
+import About from "../Pages/About/About";
+import Services from "../Pages/Services/Services";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +21,14 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "/about",
+        Component: About,
+      },
+      {
+        path: "/services",
+        Component: Services,
       },
       {
         path: "/map",
@@ -59,23 +69,21 @@ export const router = createBrowserRouter([
           },
         ],
       },
-    
     ],
-    
   },
-    {
-        path: "/dashboard",
-        element: (
-          <PrivateRoutes>
-            {" "}
-            <DashboardLayout></DashboardLayout>{" "}
-          </PrivateRoutes>
-        ),
-        children: [
-          {
-            path: "/dashboard/my-parcel",
-            Component: MyParcel,
-          },
-        ],
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoutes>
+        {" "}
+        <DashboardLayout></DashboardLayout>{" "}
+      </PrivateRoutes>
+    ),
+    children: [
+      {
+        path: "/dashboard/my-parcel",
+        Component: MyParcel,
       },
+    ],
+  },
 ]);

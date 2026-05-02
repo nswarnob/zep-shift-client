@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCoverflow, Pagination } from "swiper/modules";
+import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
@@ -11,53 +12,66 @@ const Review = () => {
       text: "A pleasure to work with! Great support and seamless service. Highly recommended!",
       name: "Awalad Hossin",
       role: "Senior Product Designer",
+      avatar: "👨‍💼",
+      rating: 5,
     },
     {
       text: "Fast delivery and excellent communication. Loved the experience!",
       name: "Rezul Ahmed",
       role: "UI/UX Specialist",
+      avatar: "👨‍🎨",
+      rating: 5,
     },
     {
       text: "Professional, reliable, and very customer-friendly. Will work again!",
       name: "Arnob",
       role: "Software Engineer",
+      avatar: "👨‍💻",
+      rating: 5,
     },
-        {
+    {
       text: "Professional, reliable, and very customer-friendly. Will work again!",
       name: "Nasif Uddin",
       role: "Software Engineer",
+      avatar: "👨‍💻",
+      rating: 5,
     },
-        {
+    {
       text: "Professional, reliable, and very customer-friendly. Will work again!",
       name: "Sharif Uddin",
       role: "Software Engineer",
-    },    {
+      avatar: "👨‍💻",
+      rating: 5,
+    },
+    {
       text: "Professional, reliable, and very customer-friendly. Will work again!",
       name: "Sharif Arnob",
       role: "Software Engineer",
+      avatar: "👨‍💻",
+      rating: 5,
     },
   ];
 
   return (
-    <section className="w-full py-14 bg-[#E8EEEE] flex flex-col items-center text-center px-4">
-      {/* Title */}
-      <h2 className="text-2xl font-semibold text-[#064A4E]">
-        What our customers are sayings
-      </h2>
-      <p className="text-sm text-gray-600 max-w-xl mt-2 mb-10">
-        Enhance posture, mobility, and well-being effectively with focus. Fix posture alignment, reduce pain, and strengthen your body with ease.
-      </p>
-
-      {/* Icon */}
-      <div className="mb-8 opacity-80">
-        <svg width="80" height="60" viewBox="0 0 80 60" fill="none">
-          <rect x="5" y="30" width="20" height="20" stroke="#064A4E" strokeWidth="2" />
-          <rect x="25" y="20" width="20" height="20" stroke="#064A4E" strokeWidth="2" />
-          <rect x="45" y="10" width="20" height="20" stroke="#064A4E" strokeWidth="2" />
-        </svg>
+    <section className="w-full py-20 bg-gradient-to-b from-gray-50 to-white flex flex-col items-center text-center px-6">
+      {/* Title Section */}
+      <div className="mb-12">
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          What Our Customers Say
+        </h2>
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-yellow-400 text-2xl">★★★★★</span>
+          <p className="text-lg font-semibold text-gray-700">
+            Rated 4.9/5 from 2,000+ Reviews
+          </p>
+        </div>
+        <p className="text-gray-600 max-w-2xl mt-4 mx-auto text-lg">
+          Join thousands of satisfied customers who trust us for reliable, fast,
+          and professional service
+        </p>
       </div>
 
-      {/* Swiper */}
+      {/* Testimonial Carousel */}
       <Swiper
         effect={"coverflow"}
         grabCursor={true}
@@ -72,30 +86,68 @@ const Review = () => {
           slideShadows: false,
         }}
         pagination={{ clickable: true }}
-        modules={[EffectCoverflow, Pagination]}
-        className="w-full max-w-4xl py-10"
+        autoplay={{
+          delay: 4000,
+          disableOnInteraction: false,
+        }}
+        modules={[EffectCoverflow, Pagination, Autoplay]}
+        className="w-full max-w-5xl py-12"
       >
         {testimonials.map((item, index) => (
-          <SwiperSlide key={index} className="max-w-xs">
-            <div className="bg-white p-6 rounded-2xl shadow-md text-left min-h-[230px]">
-              <p className="text-5xl text-[#00A38C] mb-2">“</p>
-              <p className="text-gray-700 text-sm leading-relaxed mb-4">
+          <SwiperSlide key={index} className="max-w-md">
+            <div className="bg-gradient-to-br from-lime-50 to-gray-50 p-8 rounded-2xl shadow-lg border-2 border-lime-200 text-left min-h-[300px] hover:shadow-2xl hover:translate-y-[-8px] transition-all duration-300 flex flex-col relative group">
+              {/* Decorative Top Border */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-lime-400 to-lime-300 rounded-t-2xl" />
+
+              {/* Star Rating */}
+              <div className="flex items-center gap-1 mb-4">
+                {Array.from({ length: item.rating }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="text-2xl text-yellow-400 group-hover:scale-110 transition-transform"
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+
+              {/* Quote Mark */}
+              <div className="mb-3">
+                <span className="text-6xl text-lime-400 opacity-40">‟</span>
+              </div>
+
+              {/* Review Text */}
+              <p className="text-gray-700 text-base leading-relaxed mb-6 flex-grow font-medium">
                 {item.text}
               </p>
 
-              <div className="flex items-center gap-3 mt-4">
-                <div className="w-10 h-10 bg-[#00A38C] rounded-full"></div>
+              {/* Divider */}
+              <div className="border-t-2 border-lime-200 my-4 group-hover:border-lime-400 transition-colors" />
+
+              {/* Reviewer Info */}
+              <div className="flex items-center gap-4 mt-auto">
+                <div className="text-5xl">{item.avatar}</div>
                 <div>
-                  <p className="font-semibold text-[#064A4E] text-sm">
+                  <p className="font-bold text-gray-900 text-base">
                     {item.name}
                   </p>
-                  <p className="text-xs text-gray-500">{item.role}</p>
+                  <p className="text-sm text-gray-600">{item.role}</p>
                 </div>
               </div>
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
+
+      {/* CTA Section */}
+      <div className="mt-16 text-center">
+        <p className="text-gray-600 text-lg mb-6">
+          Ready to experience our service? Start your journey today!
+        </p>
+        <Link to="/send-parcel" className="inline-block bg-gradient-to-r from-lime-400 to-lime-500 text-gray-900 font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all duration-300">
+          Get Started Now
+        </Link>
+      </div>
     </section>
   );
 };
