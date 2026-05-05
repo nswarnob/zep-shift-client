@@ -40,7 +40,8 @@ export const SendParcel = () => {
 
   // Calculate cost in real-time
   const calculateCost = () => {
-    if (!parcelType || !parcelWeight || !senderDistrict || !receiverDistrict) return null;
+    if (!parcelType || !parcelWeight || !senderDistrict || !receiverDistrict)
+      return null;
 
     const isDocument = parcelType === "document";
     const isSameDistrict = senderDistrict === receiverDistrict;
@@ -56,7 +57,9 @@ export const SendParcel = () => {
       } else {
         const minCharge = isSameDistrict ? 110 : 150;
         const extraWeight = weight - 3;
-        const extraCharge = isSameDistrict ? extraWeight * 40 : extraWeight * 40 + 40;
+        const extraCharge = isSameDistrict
+          ? extraWeight * 40
+          : extraWeight * 40 + 40;
         cost = minCharge + extraCharge;
       }
     }
@@ -66,7 +69,7 @@ export const SendParcel = () => {
 
   const cost = calculateCost();
 
-  const handleSendParcel = (data) => {
+  const handleSendParcel = async (data) => {
     const isDocument = data.parcelType === "document";
     const isSameDistrict = data.senderDistrict === data.receiverDistrict;
     const parcelWeightVal = parseFloat(data.parcelWeight);
@@ -81,7 +84,9 @@ export const SendParcel = () => {
       } else {
         const minCharge = isSameDistrict ? 110 : 150;
         const extraWeight = parcelWeightVal - 3;
-        const extraCharge = isSameDistrict ? extraWeight * 40 : extraWeight * 40 + 40;
+        const extraCharge = isSameDistrict
+          ? extraWeight * 40
+          : extraWeight * 40 + 40;
         finalCost = minCharge + extraCharge;
       }
     }
@@ -106,18 +111,57 @@ export const SendParcel = () => {
         popup: "rounded-2xl",
         confirmButton: "bg-lime-400 hover:bg-lime-500 text-gray-900 font-bold",
       },
-    }).then((result) => {
+      didOpen: () => {
+        const confirmBtn = Swal.getConfirmButton();
+        confirmBtn.style.opacity = "1";
+      },
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        axiosSecure.post("/send-parcel", { ...data, cost: finalCost }).then((res) => {
-          if (res.data.insertedId) {
+        try {
+          Swal.fire({
+            title: "Submitting...",
+            html: "Please wait while we process your parcel submission",
+            icon: "info",
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+              Swal.showLoading();
+            },
+          });
+
+          const response = await axiosSecure.post("/send-parcel", {
+            ...data,
+            cost: finalCost,
+            paymentStatus: "pending",
+          });
+
+          if (response.data.insertedId) {
             Swal.fire({
-              title: "Success!",
-              text: "Your parcel has been submitted successfully!",
+              title: "Success! 🎉",
+              text: "Your parcel has been submitted successfully! You can track it in your dashboard.",
               icon: "success",
               confirmButtonColor: "#84cc16",
+              confirmButtonText: "Go to My Parcels",
+            }).then(() => {
+              // Set flag for MyParcel component to refetch
+              sessionStorage.setItem("parcelSubmitted", "true");
+              // Redirect to my parcels page or dashboard
+              window.location.href = "/dashboard/my-parcels";
             });
+          } else {
+            throw new Error("Failed to get insertion ID");
           }
-        });
+        } catch (error) {
+          console.error("Error submitting parcel:", error);
+          Swal.fire({
+            title: "Error!",
+            text:
+              error.response?.data?.error ||
+              "Failed to submit parcel. Please try again.",
+            icon: "error",
+            confirmButtonColor: "#ef4444",
+          });
+        }
       }
     });
   };
@@ -132,7 +176,8 @@ export const SendParcel = () => {
           </h1>
           <div className="h-1 w-20 bg-gradient-to-r from-lime-400 to-lime-500 rounded-full mb-6"></div>
           <p className="text-lg text-gray-600 max-w-2xl">
-            Quickly and securely send your parcels to any location across our network
+            Quickly and securely send your parcels to any location across our
+            network
           </p>
         </div>
 
@@ -165,7 +210,9 @@ export const SendParcel = () => {
           {/* Step 1: Parcel Details */}
           <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-lime-100 hover:shadow-xl transition-shadow animate-slideUpFade">
             <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-              <span className="w-8 h-8 bg-lime-400 text-gray-900 rounded-full flex items-center justify-center font-bold">1</span>
+              <span className="w-8 h-8 bg-lime-400 text-gray-900 rounded-full flex items-center justify-center font-bold">
+                1
+              </span>
               Parcel Details
             </h2>
 
@@ -208,7 +255,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("parcelName", { required: "Parcel name is required" })}
+                  {...register("parcelName", {
+                    required: "Parcel name is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-lime-400 focus:ring-2 focus:ring-lime-100 transition-all duration-300 outline-none"
                   placeholder="e.g., Books, Clothes, Electronics"
                 />
@@ -232,9 +281,14 @@ export const SendParcel = () => {
           </div>
 
           {/* Step 2: Sender Information */}
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-8 border-2 border-blue-200 hover:shadow-xl transition-shadow animate-slideUpFade" style={{ animationDelay: "0.1s" }}>
+          <div
+            className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-8 border-2 border-blue-200 hover:shadow-xl transition-shadow animate-slideUpFade"
+            style={{ animationDelay: "0.1s" }}
+          >
             <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-              <span className="w-8 h-8 bg-blue-400 text-white rounded-full flex items-center justify-center font-bold">2</span>
+              <span className="w-8 h-8 bg-blue-400 text-white rounded-full flex items-center justify-center font-bold">
+                2
+              </span>
               Sender Information
             </h2>
 
@@ -258,7 +312,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="tel"
-                  {...register("senderPhone", { required: "Phone is required" })}
+                  {...register("senderPhone", {
+                    required: "Phone is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-300 outline-none"
                   placeholder="01xxxxxxxxx"
                 />
@@ -270,7 +326,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="email"
-                  {...register("senderEmail", { required: "Email is required" })}
+                  {...register("senderEmail", {
+                    required: "Email is required",
+                  })}
                   defaultValue={user?.email || ""}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-300 outline-none"
                   placeholder="your@email.com"
@@ -282,7 +340,9 @@ export const SendParcel = () => {
                   Region *
                 </label>
                 <select
-                  {...register("senderRegion", { required: "Region is required" })}
+                  {...register("senderRegion", {
+                    required: "Region is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-300 outline-none bg-white"
                 >
                   <option value="">Select Region</option>
@@ -299,16 +359,19 @@ export const SendParcel = () => {
                   District *
                 </label>
                 <select
-                  {...register("senderDistrict", { required: "District is required" })}
+                  {...register("senderDistrict", {
+                    required: "District is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-300 outline-none bg-white"
                   disabled={!senderRegion}
                 >
                   <option value="">Select District</option>
-                  {senderRegion && districtByRegion(senderRegion).map((d, i) => (
-                    <option key={i} value={d}>
-                      {d}
-                    </option>
-                  ))}
+                  {senderRegion &&
+                    districtByRegion(senderRegion).map((d, i) => (
+                      <option key={i} value={d}>
+                        {d}
+                      </option>
+                    ))}
                 </select>
               </div>
 
@@ -318,7 +381,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("senderAddress", { required: "Address is required" })}
+                  {...register("senderAddress", {
+                    required: "Address is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-300 outline-none"
                   placeholder="House/Building number, Street, Area"
                 />
@@ -339,9 +404,14 @@ export const SendParcel = () => {
           </div>
 
           {/* Step 3: Receiver Information */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl shadow-lg p-8 border-2 border-purple-200 hover:shadow-xl transition-shadow animate-slideUpFade" style={{ animationDelay: "0.2s" }}>
+          <div
+            className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl shadow-lg p-8 border-2 border-purple-200 hover:shadow-xl transition-shadow animate-slideUpFade"
+            style={{ animationDelay: "0.2s" }}
+          >
             <h2 className="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-3">
-              <span className="w-8 h-8 bg-purple-400 text-white rounded-full flex items-center justify-center font-bold">3</span>
+              <span className="w-8 h-8 bg-purple-400 text-white rounded-full flex items-center justify-center font-bold">
+                3
+              </span>
               Receiver Information
             </h2>
 
@@ -352,7 +422,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("receiverName", { required: "Name is required" })}
+                  {...register("receiverName", {
+                    required: "Name is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all duration-300 outline-none"
                   placeholder="Receiver's full name"
                 />
@@ -364,7 +436,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="tel"
-                  {...register("receiverPhone", { required: "Phone is required" })}
+                  {...register("receiverPhone", {
+                    required: "Phone is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all duration-300 outline-none"
                   placeholder="01xxxxxxxxx"
                 />
@@ -376,7 +450,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="email"
-                  {...register("receiverEmail", { required: "Email is required" })}
+                  {...register("receiverEmail", {
+                    required: "Email is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all duration-300 outline-none"
                   placeholder="receiver@email.com"
                 />
@@ -387,7 +463,9 @@ export const SendParcel = () => {
                   Region *
                 </label>
                 <select
-                  {...register("receiverRegion", { required: "Region is required" })}
+                  {...register("receiverRegion", {
+                    required: "Region is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all duration-300 outline-none bg-white"
                 >
                   <option value="">Select Region</option>
@@ -404,16 +482,19 @@ export const SendParcel = () => {
                   District *
                 </label>
                 <select
-                  {...register("receiverDistrict", { required: "District is required" })}
+                  {...register("receiverDistrict", {
+                    required: "District is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all duration-300 outline-none bg-white"
                   disabled={!receiverRegion}
                 >
                   <option value="">Select District</option>
-                  {receiverRegion && districtByRegion(receiverRegion).map((d, i) => (
-                    <option key={i} value={d}>
-                      {d}
-                    </option>
-                  ))}
+                  {receiverRegion &&
+                    districtByRegion(receiverRegion).map((d, i) => (
+                      <option key={i} value={d}>
+                        {d}
+                      </option>
+                    ))}
                 </select>
               </div>
 
@@ -423,7 +504,9 @@ export const SendParcel = () => {
                 </label>
                 <input
                   type="text"
-                  {...register("receiverAddress", { required: "Address is required" })}
+                  {...register("receiverAddress", {
+                    required: "Address is required",
+                  })}
                   className="w-full px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-purple-400 focus:ring-2 focus:ring-purple-100 transition-all duration-300 outline-none"
                   placeholder="House/Building number, Street, Area"
                 />
@@ -445,22 +528,32 @@ export const SendParcel = () => {
 
           {/* Cost Summary */}
           {cost && (
-            <div className="bg-gradient-to-r from-lime-50 to-lime-100 rounded-2xl p-8 border-2 border-lime-300 animate-slideUpFade" style={{ animationDelay: "0.3s" }}>
+            <div
+              className="bg-gradient-to-r from-lime-50 to-lime-100 rounded-2xl p-8 border-2 border-lime-300 animate-slideUpFade"
+              style={{ animationDelay: "0.3s" }}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-lg mb-2">Estimated Delivery Cost</p>
+                  <p className="text-gray-600 text-lg mb-2">
+                    Estimated Delivery Cost
+                  </p>
                   <p className="text-4xl font-bold text-lime-600">৳ {cost}</p>
                 </div>
                 <div className="text-5xl">💰</div>
               </div>
               <p className="text-sm text-gray-600 mt-4">
-                {senderDistrict === receiverDistrict ? "✓ Same district delivery" : "✓ Different district delivery"}
+                {senderDistrict === receiverDistrict
+                  ? "✓ Same district delivery"
+                  : "✓ Different district delivery"}
               </p>
             </div>
           )}
 
           {/* Submit Button */}
-          <div className="text-center animate-slideUpFade" style={{ animationDelay: "0.4s" }}>
+          <div
+            className="text-center animate-slideUpFade"
+            style={{ animationDelay: "0.4s" }}
+          >
             <button
               type="submit"
               className="bg-gradient-to-r from-lime-400 to-lime-500 text-gray-900 font-bold py-4 px-12 rounded-full shadow-lg hover:shadow-2xl hover:translate-y-[-2px] transition-all duration-300 text-lg inline-flex items-center gap-2"
